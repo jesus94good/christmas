@@ -75,6 +75,39 @@
   /* ---------- 第二層內容 ---------- */
   const $ = id => document.getElementById(id);
 
+  /* 依設計稿斷行：每一行放在自己的一列，空行保留成段落間距 */
+  function setLines(el, text) {
+    el.textContent = '';
+    if (!text) return;
+    text.split('\n').forEach(line => {
+      const ln = document.createElement('span');
+      ln.className = 'ln';
+      ln.textContent = line || '\u00a0';
+      el.appendChild(ln);
+    });
+  }
+
+  /* 有些手機會把字放大（系統字級、LINE 的字體大小設定），
+     原本排好的一行就會被擠成兩行。這裡量每一行的實際寬度，
+     只要有一行放不下，就把內文整體等比例縮小到剛好放得下。 */
+  function fitText() {
+    if (giftScreen.hidden) return;
+    giftScreen.style.setProperty('--fit', '1');
+    let scale = 1;
+    ['gGreeting', 'gBody', 'gClosing'].forEach(id => {
+      const block = $(id);
+      const cs = getComputedStyle(block);
+      const avail = block.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+      block.querySelectorAll('.ln').forEach(ln => {
+        const w = ln.scrollWidth;
+        if (avail > 0 && w > avail + 1) scale = Math.min(scale, avail / w);
+      });
+    });
+    if (scale < 1) giftScreen.style.setProperty('--fit', (scale * 0.98).toFixed(4));
+  }
+  let fitTimer;
+  window.addEventListener('resize', () => { clearTimeout(fitTimer); fitTimer = setTimeout(fitText, 150); });
+
   function renderGift(n) {
     const type = App.typeOf(n);
     const typeCfg = C.TYPES[type];
@@ -86,6 +119,7 @@
     img.alt = `禮物${NUM[n] || n}`;
 
     ['gTitle', 'gGreeting', 'gBody', 'gClosing'].forEach(id => { $(id).textContent = ''; });
+    giftScreen.style.setProperty('--fit', '1');
     $('lineBtn').hidden = true;
 
     App.loadContent().then(all => {
@@ -94,9 +128,9 @@
       if (!item) { $('gGreeting').textContent = '這份禮物還在包裝中，請稍後再來'; return; }
 
       $('gTitle').textContent = item.title || '';
-      $('gGreeting').textContent = item.greeting || '';
-      $('gBody').textContent = item.body || '';
-      $('gClosing').textContent = item.closing || '';
+      setLines($('gGreeting'), item.greeting);
+      setLines($('gBody'), item.body);
+      setLines($('gClosing'), item.closing);
       $('gBody').parentElement.hidden = !item.body;
       document.title = `${item.title || '你的禮物'}｜聖誕快樂`;
 
@@ -104,6 +138,9 @@
       btn.href = item.link || typeCfg.link;
       btn.textContent = item.button || `加入「${item.channel || typeCfg.label}」`;
       btn.hidden = false;
+
+      fitText();
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitText);
     }).catch(err => {
       console.error(err);
       $('gGreeting').textContent = '禮物打開失敗，請檢查網路後重新整理';

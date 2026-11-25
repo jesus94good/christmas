@@ -7,7 +7,7 @@ window.APP_CONFIG = {
   TOTAL: 8,
 
   // 內容版本號：每次更新 content.json、音樂或圖片後 +1，避免使用者看到舊快取
-  CONTENT_VERSION: 10,
+  CONTENT_VERSION: 11,
 
   // 內容來源
   //   留空 ''  → 讀取 data/content.json（建議，最快最穩）
