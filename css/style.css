@@ -50,7 +50,7 @@ a { color: inherit; }
  * 背景音樂按鈕（右上角，跟著畫面固定）
  * ========================================================= */
 .music-btn {
-  position: fixed; z-index: 20;
+  position: absolute; z-index: 20;   /* 只在頁面最上方，往下滑會跟著捲走 */
   top: calc(12px + env(safe-area-inset-top));
   right: max(12px, calc(50vw - var(--maxw) / 2 + 12px));
   width: 44px; height: 44px;
@@ -68,8 +68,14 @@ a { color: inherit; }
 .music-btn .ico-note { fill: currentColor; }
 .music-btn .ico-off { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; display: none; }
 .music-btn.is-playing .ico-note { animation: sway 1.6s ease-in-out infinite; transform-origin: 50% 80%; }
-.music-btn:not(.is-playing) { opacity: .75; }
-.music-btn:not(.is-playing) .ico-off { display: block; }
+.music-btn:not(.is-playing):not(.is-loading) { opacity: .75; }
+.music-btn:not(.is-playing):not(.is-loading) .ico-off { display: block; }
+.music-btn.is-loading::after {          /* 載入中：外圈轉動，表示音樂快出來了 */
+  content: ""; position: absolute; inset: -3px; border-radius: 50%;
+  border: 2px solid transparent; border-top-color: var(--gold); border-right-color: var(--gold);
+  animation: spin .9s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 .music-btn.is-playing::after {          /* 播放中：外圈輕輕擴散 */
   content: ""; position: absolute; inset: -2px; border-radius: 50%;
   border: 1.5px solid var(--gold);
@@ -186,9 +192,9 @@ a { color: inherit; }
 
 /* 返回鍵（設計稿外加，方便回到禮物堆；樣式與音樂鍵成對） */
 .back-btn {
-  position: fixed; z-index: 20;
+  position: absolute; z-index: 20;   /* 只在頁面最上方，往下滑會跟著捲走 */
   top: calc(12px + env(safe-area-inset-top));
-  left: max(12px, calc(50vw - var(--maxw) / 2 + 12px));
+  left: 12px;
   width: 44px; height: 44px;
   display: grid; place-items: center;
   border-radius: 50%;
