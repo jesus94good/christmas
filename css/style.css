@@ -218,6 +218,7 @@ a { color: inherit; }
   line-height: 1;
   font-weight: 900;
   text-align: center;
+  white-space: nowrap;
   color: var(--title);
   letter-spacing: 0;
 }
@@ -230,12 +231,13 @@ a { color: inherit; }
 /* 內文：字級 40、行距 78；單數置中、雙數靠左 */
 .g-text {
   margin: 0;
-  font-size: calc(40 * var(--u));
-  line-height: calc(78 * var(--u));
-  white-space: pre-line;          /* 依設計稿斷行，空一行＝段落 */
+  /* --fit：手機把字放大（系統字級、LINE 字體大小）時自動縮回，讓每一行都不會被拆開 */
+  font-size: calc(40 * var(--u) * var(--fit, 1));
+  line-height: calc(78 * var(--u) * var(--fit, 1));
   text-align: center;
   padding: 0 calc(30 * var(--u)) 0 calc(40 * var(--u));
 }
+.g-text .ln { display: block; white-space: nowrap; }   /* 一行就是一行，依設計稿斷行 */
 .screen-gift[data-type="goodnight"] .g-text {
   text-align: left;
   padding: 0 calc(30 * var(--u)) 0 calc(131 * var(--u));
@@ -260,7 +262,9 @@ a { color: inherit; }
 .g-cta { margin-top: calc(92 * var(--u)); padding-left: calc(10 * var(--u)); text-align: center; }
 .g-btn {
   display: inline-flex; align-items: center; justify-content: center;
-  width: calc(633 * var(--u)); height: calc(134 * var(--u));
+  min-width: calc(633 * var(--u)); max-width: 100%; height: calc(134 * var(--u));
+  padding: 0 calc(48 * var(--u));
+  white-space: nowrap;            /* 按鈕文字不換行；字被放大時按鈕自動變寬 */
   border-radius: 999px;
   background: var(--btn); color: var(--btn-text);
   font-size: calc(40 * var(--u)); font-weight: 900; letter-spacing: 0;
