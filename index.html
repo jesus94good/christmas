@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>聖誕快樂｜領取一份祝福</title>
+  <meta name="description" content="很開心在這個充滿祝福的街頭與你相遇，選一個你喜歡的禮物吧！">
+  <meta property="og:title" content="聖誕快樂｜領取一份祝福">
+  <meta property="og:description" content="八個禮物，八份不同的祝福，選一個你喜歡的吧～">
+  <meta property="og:image" content="img/og.jpg">
+  <meta name="theme-color" content="#631111">
+  <link rel="icon" href="img/icon.png">
+  <link rel="apple-touch-icon" href="img/icon.png">
+  <link rel="preload" as="image" href="img/greeting.webp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chiron+GoRound+TC:wght@400;700&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- 背景音樂：整個活動只有這一個頁面，換畫面時音樂不會中斷 -->
+  <audio id="bgm" loop preload="metadata"></audio>
+  <button type="button" class="music-btn" id="musicBtn" aria-label="播放背景音樂" aria-pressed="false" hidden>
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path class="ico-note" d="M9 18.5a3 3 0 1 1-2-2.83V5.2l12-2.7v12.5a3 3 0 1 1-2-2.83V7.06l-8 1.8v9.64z"/>
+      <path class="ico-off" d="M3.5 3.5l17 17"/>
+    </svg>
+  </button>
+
+  <main class="wrap">
+
+    <!-- ================= 第一層：問候頁 ================= -->
+    <section class="screen screen-home" id="screenHome">
+      <!-- 直接使用設計稿（主視覺、問候文字、選禮物按鈕） -->
+      <header class="greeting-art">
+        <img src="img/greeting.webp" width="960" height="2260"
+             alt="Merry Christmas。嗨！聖誕快樂～雖然我們不認識，但很開心在這個充滿祝福的街頭與你相遇。既然都來到我們家門口了，領取一份祝福再走吧～下面有八個禮物，選擇一個你喜歡的，每個禮物都有不同的祝福在裡面，希望你走在冷冷的街頭上，心能被這份不期而遇的祝福給溫暖到：）選一個你喜歡的禮物">
+      </header>
+
+      <!-- 八個禮物：位置／大小／角度依設計稿量測
+           --x 中心橫向位置、--y 中心縱向位置、--w 寬度、--r 旋轉角度、--d 跳動的延遲 -->
+      <nav class="gifts" id="gifts" aria-label="選一個你喜歡的禮物">
+        <img class="gifts-bg" src="img/gift-bg.webp" width="960" height="2763" alt="">
+        <a class="gift" href="#gift-1" style="--x:41.75%;--y:10.33%;--w:38.97%;--r:-20deg;--d:0s"    aria-label="禮物一"><span class="hop"><span class="squash"><img src="img/gifts/gift1.webp" alt=""></span></span></a>
+        <a class="gift" href="#gift-2" style="--x:65.33%;--y:23.74%;--w:37.98%;--r:17.5deg;--d:.25s" aria-label="禮物二"><span class="hop"><span class="squash"><img src="img/gifts/gift2.webp" alt=""></span></span></a>
+        <a class="gift" href="#gift-3" style="--x:38.83%;--y:36.03%;--w:36.18%;--r:0deg;--d:.5s"     aria-label="禮物三"><span class="hop"><span class="squash"><img src="img/gifts/gift3.webp" alt=""></span></span></a>
+        <a class="gift" href="#gift-4" style="--x:60.92%;--y:45.18%;--w:37.67%;--r:-19deg;--d:.75s"  aria-label="禮物四"><span class="hop"><span class="squash"><img src="img/gifts/gift4.webp" alt=""></span></span></a>
+        <a class="gift" href="#gift-5" style="--x:35.92%;--y:59.66%;--w:37.02%;--r:-11.5deg;--d:1s" aria-label="禮物五"><span class="hop"><span class="squash"><img src="img/gifts/gift5.webp" alt=""></span></span></a>
+        <a class="gift" href="#gift-6" style="--x:67.92%;--y:67.7%;--w:30.45%;--r:20deg;--d:1.25s"   aria-label="禮物六"><span class="hop"><span class="squash"><img src="img/gifts/gift6.webp" alt=""></span></span></a>
+        <a class="gift" href="#gift-7" style="--x:36.25%;--y:80.54%;--w:44.84%;--r:0deg;--d:1.5s"    aria-label="禮物七"><span class="hop"><span class="squash"><img src="img/gifts/gift7.webp" alt=""></span></span></a>
+        <a class="gift" href="#gift-8" style="--x:67.71%;--y:90.23%;--w:37.23%;--r:0deg;--d:1.75s"   aria-label="禮物八"><span class="hop"><span class="squash"><img src="img/gifts/gift8.webp" alt=""></span></span></a>
+      </nav>
+    </section>
+
+    <!-- ================= 第二層：禮物內容（依「內容頁排版」設計稿） ================= -->
+    <section class="screen screen-gift" id="screenGift" hidden>
+      <a href="#" class="back-btn" id="backLink" aria-label="回到禮物堆">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </a>
+
+      <header class="g-head">
+        <img class="g-sparkles" src="img/sparkles.webp" width="960" height="427" alt="">
+        <div class="g-gift" id="gGift"><span class="hop"><span class="squash"><img id="giftImg" src="" alt=""></span></span></div>
+      </header>
+
+      <h1 class="g-title" id="gTitle"></h1>
+      <hr class="g-rule">
+
+      <p class="g-text" id="gGreeting"></p>
+      <div class="g-card"><p class="g-text" id="gBody"></p></div>
+      <p class="g-text" id="gClosing"></p>
+
+      <div class="g-cta">
+        <a class="g-btn" id="lineBtn" href="#" target="_blank" rel="noopener"></a>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/music.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

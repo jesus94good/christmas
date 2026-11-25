@@ -1,0 +1,271 @@
+/* =========================================================
+ * 聖誕節活動｜樣式（依「聖誕節網頁_問候頁」設計稿）
+ * 顏色、字體集中在 :root
+ * ========================================================= */
+:root {
+  --red-deep: #631111;      /* 背景最深 */
+  --red: #8a1726;           /* 背景中間 */
+  --red-glow: #a01a2d;      /* 背景亮處 */
+  --gold: #d8ad61;          /* 按鈕、分隔線 */
+  --cream: #f7efe2;         /* 文章卡片 */
+  --ink: #2b1a14;           /* 卡片內文字 */
+  --ink-muted: #7d6656;
+  --white: #ffffff;
+  --line-green: #06c755;
+
+  /* 設計稿字體：源泉圓體 Bold；手機上若沒有安裝，使用外觀相近的 Chiron GoRound TC */
+  --font: "GenSenRounded2 TC", "GenSenRounded TW", "Chiron GoRound TC", "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+
+  --maxw: 480px;
+  --pad: min(9vw, 43px);   /* 設計稿左右留白約 9% */
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: #3a0909;
+  color: var(--white);
+  font-family: var(--font);
+  font-weight: 700;
+  -webkit-font-smoothing: antialiased;
+}
+img { display: block; max-width: 100%; }
+a { color: inherit; }
+[hidden] { display: none !important; }
+
+.wrap {
+  position: relative;
+  max-width: var(--maxw);
+  min-height: 100svh;
+  margin: 0 auto;
+  overflow-x: clip;
+  background: var(--red-deep);
+}
+
+.screen { animation: screenIn .35s ease both; }
+@keyframes screenIn { from { opacity: 0; } }
+
+/* =========================================================
+ * 背景音樂按鈕（右上角，跟著畫面固定）
+ * ========================================================= */
+.music-btn {
+  position: fixed; z-index: 20;
+  top: calc(12px + env(safe-area-inset-top));
+  right: max(12px, calc(50vw - var(--maxw) / 2 + 12px));
+  width: 44px; height: 44px;
+  display: grid; place-items: center;
+  padding: 0; border-radius: 50%;
+  border: 1.5px solid rgba(216,173,97,.8);
+  background: rgba(60, 10, 10, .55);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  color: var(--gold);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity .3s;
+}
+.music-btn svg { width: 22px; height: 22px; }
+.music-btn .ico-note { fill: currentColor; }
+.music-btn .ico-off { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; display: none; }
+.music-btn.is-playing .ico-note { animation: sway 1.6s ease-in-out infinite; transform-origin: 50% 80%; }
+.music-btn:not(.is-playing) { opacity: .75; }
+.music-btn:not(.is-playing) .ico-off { display: block; }
+.music-btn.is-playing::after {          /* 播放中：外圈輕輕擴散 */
+  content: ""; position: absolute; inset: -2px; border-radius: 50%;
+  border: 1.5px solid var(--gold);
+  animation: ripple 1.8s ease-out infinite;
+}
+@keyframes sway { 0%,100% { transform: rotate(-8deg); } 50% { transform: rotate(8deg); } }
+@keyframes ripple { from { transform: scale(1); opacity: .7; } to { transform: scale(1.5); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .music-btn.is-playing .ico-note, .music-btn.is-playing::after { animation: none; }
+}
+
+/* =========================================================
+ * 第一層：問候頁（設計稿圖片 + 八個會跳動的禮物）
+ * ========================================================= */
+.greeting-art img, .gifts-bg { width: 100%; height: auto; }
+
+.gifts { position: relative; }
+.gift {
+  position: absolute;
+  left: var(--x); top: var(--y); width: var(--w);
+  transform: translate(-50%, -50%);
+  -webkit-tap-highlight-color: transparent;
+  outline-offset: 4px;
+  border-radius: 24px;
+}
+.gift img {
+  display: block; width: 100%; height: auto;
+  transform: rotate(var(--r));
+  transition: transform .2s ease;
+  pointer-events: none;
+}
+.gift:active img { transform: rotate(var(--r)) scale(.94); }
+@media (hover: hover) { .gift:hover img { transform: rotate(var(--r)) scale(1.06); } }
+.gift:focus-visible { outline: 2px dashed var(--gold); }
+
+/* ---------- 連續跳動 ----------
+ * 分成兩層，各自是一條平順的曲線，循環接縫處不會頓一下：
+ *   .hop    上下彈跳：往上減速、往下加速（像拋物線）
+ *   .squash 落地時輕輕壓扁、離地後回復
+ * 負延遲：一打開就在跳，8 個禮物彼此錯開 */
+.hop, .squash {
+  display: block;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.hop    { animation: hop    var(--hop-dur) linear calc(var(--d, 0s) * -1) infinite; }
+.squash { animation: squash var(--hop-dur) ease-in-out calc(var(--d, 0s) * -1) infinite; transform-origin: 50% 100%; }
+:root { --hop-dur: 1.5s; }   /* 跳一次的時間：數字越大越慢 */
+
+@keyframes hop {
+  0%   { transform: translateY(0);    animation-timing-function: cubic-bezier(.33, .9, .6, 1); }  /* 往上：越來越慢 */
+  50%  { transform: translateY(-10%); animation-timing-function: cubic-bezier(.4, 0, .67, .1); }  /* 往下：越來越快 */
+  100% { transform: translateY(0); }
+}
+@keyframes squash {
+  0%, 100% { transform: scale(1.04, .95); }
+  16%, 84% { transform: scale(1, 1); }
+}
+
+/* 點選後：被選的禮物晃一下放大，其他淡出 */
+.is-picking .hop, .is-picking .squash { animation-play-state: paused; }
+.is-picking .gift:not(.is-picked) { opacity: .25; transition: opacity .3s; }
+.gift.is-picked { z-index: 2; }
+.gift.is-picked .squash { animation: pick .42s ease-out forwards; }
+@keyframes pick {
+  0%   { transform: scale(1)    rotate(0); }
+  35%  { transform: scale(1.12) rotate(-6deg); }
+  65%  { transform: scale(1.12) rotate(6deg); }
+  100% { transform: scale(1.25) rotate(0); opacity: .9; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hop, .squash { animation: none; }
+}
+
+/* =========================================================
+ * 第二層：禮物內容（依「內容頁排版」設計稿等比例縮放）
+ * 設計稿寬 1080，--u = 設計稿上的 1 單位
+ * ========================================================= */
+@font-face {
+  font-family: "XmasRounded";            /* 源泉圓體（由設計稿取出的子集，只含內容頁用到的字） */
+  src: url("../fonts/xmas-medium.woff2") format("woff2");
+  font-weight: 500; font-display: swap;
+}
+@font-face {
+  font-family: "XmasRounded";
+  src: url("../fonts/xmas-heavy.woff2") format("woff2");
+  font-weight: 900; font-display: swap;
+}
+
+.screen-gift {
+  --u: calc(min(100vw, var(--maxw)) / 1080);
+  --bg: #5e1e1e; --card: #7f5050;          /* 單數：禱告時光（紅） */
+  position: relative;
+  min-height: 100svh;
+  padding-bottom: calc(97 * var(--u) + env(safe-area-inset-bottom));
+  background: var(--bg);
+  font-family: "XmasRounded", var(--font);
+  font-weight: 500;
+  color: #fff;
+}
+.screen-gift[data-type="goodnight"] { --bg: #2a3a29; --card: #6f7f6e; }   /* 雙數：晚安好好睡（綠） */
+
+/* 每個禮物：標題／按鈕顏色、頂部禮物的位置（中心 x、y，寬度，角度） */
+.screen-gift[data-gift="1"] { --title: #99c6cc; --btn: #99c6cc; --btn-text: #fff;    --gx: 534; --gy: 283; --gw: 302; --gr: -1deg; }
+.screen-gift[data-gift="2"] { --title: #e2a869; --btn: #e2a869; --btn-text: #fff;    --gx: 528; --gy: 278; --gw: 289; --gr: 0deg; }
+.screen-gift[data-gift="3"] { --title: #efdfc9; --btn: #efdfc9; --btn-text: #5e1e1e; --gx: 528; --gy: 273; --gw: 339; --gr: 0deg; }
+.screen-gift[data-gift="4"] { --title: #efdfc9; --btn: #e2a869; --btn-text: #fff;    --gx: 538; --gy: 280; --gw: 323; --gr: -1.5deg; }
+.screen-gift[data-gift="5"] { --title: #efdfc9; --btn: #efdfc9; --btn-text: #5e1e1e; --gx: 547; --gy: 294; --gw: 294; --gr: 0deg; }
+.screen-gift[data-gift="6"] { --title: #e2a869; --btn: #e2a869; --btn-text: #fff;    --gx: 546; --gy: 267; --gw: 273; --gr: 3.5deg; }
+.screen-gift[data-gift="7"] { --title: #efdfc9; --btn: #efdfc9; --btn-text: #5e1e1e; --gx: 540; --gy: 298; --gw: 339; --gr: 0deg; }
+.screen-gift[data-gift="8"] { --title: #e2a869; --btn: #e2a869; --btn-text: #fff;    --gx: 541; --gy: 302; --gw: 274; --gr: 0deg; }
+
+/* 返回鍵（設計稿外加，方便回到禮物堆；樣式與音樂鍵成對） */
+.back-btn {
+  position: fixed; z-index: 20;
+  top: calc(12px + env(safe-area-inset-top));
+  left: max(12px, calc(50vw - var(--maxw) / 2 + 12px));
+  width: 44px; height: 44px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  border: 1.5px solid rgba(216,173,97,.8);
+  background: rgba(30, 10, 10, .45);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  color: var(--gold);
+  -webkit-tap-highlight-color: transparent;
+}
+.back-btn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+/* 頂部：星星雪花 + 跳動的禮物 */
+.g-head { position: relative; height: calc(480 * var(--u)); }
+.g-sparkles { position: absolute; left: 0; top: 0; width: 100%; height: auto; pointer-events: none; }
+.g-gift {
+  position: absolute;
+  left: calc(var(--gx) * var(--u)); top: calc(var(--gy) * var(--u));
+  width: calc(var(--gw) * var(--u));
+  transform: translate(-50%, -50%);
+}
+.g-gift img { display: block; width: 100%; height: auto; transform: rotate(var(--gr)); }
+
+/* 標題 + 白線 */
+.g-title {
+  margin: calc(23 * var(--u)) 0 0 calc(10 * var(--u));
+  font-size: calc(128 * var(--u));
+  line-height: 1;
+  font-weight: 900;
+  text-align: center;
+  color: var(--title);
+  letter-spacing: 0;
+}
+.g-rule {
+  margin: calc(56 * var(--u)) 0 0 calc(119 * var(--u));
+  width: calc(851 * var(--u)); height: calc(4.5 * var(--u));
+  border: 0; background: #fff;
+}
+
+/* 內文：字級 40、行距 78；單數置中、雙數靠左 */
+.g-text {
+  margin: 0;
+  font-size: calc(40 * var(--u));
+  line-height: calc(78 * var(--u));
+  white-space: pre-line;          /* 依設計稿斷行，空一行＝段落 */
+  text-align: center;
+  padding: 0 calc(30 * var(--u)) 0 calc(40 * var(--u));
+}
+.screen-gift[data-type="goodnight"] .g-text {
+  text-align: left;
+  padding: 0 calc(30 * var(--u)) 0 calc(131 * var(--u));
+}
+#gGreeting { margin-top: calc(104 * var(--u)); }
+.screen-gift[data-type="goodnight"] #gGreeting { margin-top: calc(88 * var(--u)); }
+
+.g-card {
+  margin: calc(84 * var(--u)) 0 0 calc(5 * var(--u));
+  width: calc(1080 * var(--u));
+  padding: calc(46 * var(--u)) 0 calc(62 * var(--u));
+  background: var(--card);
+  border-radius: calc(64 * var(--u));
+  box-shadow: 0 calc(14 * var(--u)) calc(12 * var(--u)) calc(-4 * var(--u)) rgba(0,0,0,.6);
+}
+.g-card .g-text { padding-left: calc(35 * var(--u)); }
+.screen-gift[data-type="goodnight"] .g-card .g-text { padding-left: calc(126 * var(--u)); }
+
+#gClosing { margin-top: calc(93 * var(--u)); }
+
+/* 加好友按鈕 */
+.g-cta { margin-top: calc(92 * var(--u)); padding-left: calc(10 * var(--u)); text-align: center; }
+.g-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: calc(633 * var(--u)); height: calc(134 * var(--u));
+  border-radius: 999px;
+  background: var(--btn); color: var(--btn-text);
+  font-size: calc(40 * var(--u)); font-weight: 900; letter-spacing: 0;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .15s ease, filter .15s ease;
+}
+.g-btn:active { transform: scale(.96); filter: brightness(.95); }
